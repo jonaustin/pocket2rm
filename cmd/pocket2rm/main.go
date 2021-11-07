@@ -7,21 +7,22 @@ import (
 )
 
 func main() {
+	fmt.Println("start program")
+
 	var getMaxFiles = func(key string) uint {
 		val, existing := os.LookupEnv(key)
 		if existing {
-			u64, err := strconv.ParseUint(val, 10, 32)
+			maxFiles, err := strconv.ParseInt(val, 10, 64)
 			if err != nil {
 				fmt.Println(err)
 			}
-			return uint(u64)
-		} else {
-			return 10
+			return uint(maxFiles)
 		}
+
+		return 10
 	}
 	var maxFiles = getMaxFiles("NUM_FETCH_ARTICLES")
 
-	fmt.Println("start programm")
 	if reloadFileExists() {
 		fmt.Println("reload file exists")
 	} else {
