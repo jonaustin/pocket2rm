@@ -64,7 +64,9 @@ main() {
 
   printf "\n"
   read  -r -p "Enter your Remarkable IP address [10.11.99.1]: " REMARKABLE_IP
+  read  -r -p "Number of articles to fetch: " NUM_FETCH_ARTICLES
   REMARKABLE_IP=${REMARKABLE_IP:-10.11.99.1}
+  export NUM_FETCH_ARTICLES=${NUM_FETCH_ARTICLES:-10}
   
   if [ ! -f "$HOME/.pocket2rm" ]; then
     check_go
