@@ -38,22 +38,22 @@ compile_bin_files() {
 
 copy_bin_files_to_remarkable() {
   cd "$INSTALL_SCRIPT_DIR"
-  scp "$HOME/.pocket2rm" root@"$REMARKABLE_IP":/home/root/.
-  ssh root@"$REMARKABLE_IP" systemctl stop pocket2rm 2> /dev/null;
-  ssh root@"$REMARKABLE_IP" systemctl stop pocket2rm-reload 2> /dev/null;
-  scp cmd/pocket2rm/pocket2rm.arm root@"$REMARKABLE_IP":/home/root/.
-  scp cmd/pocket2rm-reload/pocket2rm-reload.arm root@"$REMARKABLE_IP":/home/root/.
+  scp $SSH_OPTIONS"$HOME/.pocket2rm" root@"$REMARKABLE_IP":/home/root/.
+  ssh $SSH_OPTIONS@"$REMARKABLE_IP" systemctl stop pocket2rm 2> /dev/null;
+  ssh $SSH_OPTIONS@"$REMARKABLE_IP" systemctl stop pocket2rm-reload 2> /dev/null;
+  scp $SSH_OPTIONScmd/pocket2rm/pocket2rm.arm root@"$REMARKABLE_IP":/home/root/.
+  scp $SSH_OPTIONScmd/pocket2rm-reload/pocket2rm-reload.arm root@"$REMARKABLE_IP":/home/root/.
 }
 
 copy_service_files_to_remarkable() {
   cd "$INSTALL_SCRIPT_DIR"
-  scp cmd/pocket2rm/pocket2rm.service root@"$REMARKABLE_IP":/etc/systemd/system/.
-  scp cmd/pocket2rm-reload/pocket2rm-reload.service root@"$REMARKABLE_IP":/etc/systemd/system/.
+  scp $SSH_OPTIONScmd/pocket2rm/pocket2rm.service root@"$REMARKABLE_IP":/etc/systemd/system/.
+  scp $SSH_OPTIONScmd/pocket2rm-reload/pocket2rm-reload.service root@"$REMARKABLE_IP":/etc/systemd/system/.
 }
 
 register_and_run_service_on_remarkable() {
-  ssh root@"$REMARKABLE_IP" systemctl enable pocket2rm-reload
-  ssh root@"$REMARKABLE_IP" systemctl start pocket2rm-reload
+  ssh $SSH_OPTIONS@"$REMARKABLE_IP" systemctl enable pocket2rm-reload
+  ssh $SSH_OPTIONS@"$REMARKABLE_IP" systemctl start pocket2rm-reload
 }
 
 INSTALL_SCRIPT_DIR=""
@@ -61,6 +61,7 @@ REMARKABLE_IP=""
 
 main() {
   INSTALL_SCRIPT_DIR=$(pwd)
+  SSH_OPTIONS="-o 'HostKeyAlgorithms=+ssh-rsa'"
 
   printf "\n"
   read  -r -p "Enter your Remarkable IP address [10.11.99.1]: " REMARKABLE_IP
