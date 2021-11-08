@@ -1,5 +1,18 @@
 #!/bin/bash
 
+# Note about ssh:
+# RSA is deprecated as of SSH 8.8 (Potentially-incompatible changes section): 
+#    https://lists.mindrot.org/pipermail/openssh-unix-announce/2021-September/000146.html
+#
+# RM2 openssh only appears to support rsa; to get around it, add something like this to your ssh config
+# ~/.ssh/config:
+# Host rm2
+#   user root
+#   hostname 10.11.99.1
+#   HostkeyAlgorithms +ssh-rsa
+#   PubkeyAcceptedAlgorithms +ssh-rsa
+
+
 set -eu
 
 check_go() {
@@ -30,30 +43,27 @@ compile_bin_files() {
   GOOS=linux GOARCH=arm GOARM=7 go build -o pocket2rm-reload.arm
 
   printf "pocket2rm successfully compiled"
-
-  printf "\n\n"
-  "$INSTALL_SCRIPT_DIR/cmd/pocket2rm-setup/main"
-  printf "\n"
 }
 
 copy_bin_files_to_remarkable() {
   cd "$INSTALL_SCRIPT_DIR"
-  scp $SSH_OPTIONS"$HOME/.pocket2rm" root@"$REMARKABLE_IP":/home/root/.
-  ssh $SSH_OPTIONS@"$REMARKABLE_IP" systemctl stop pocket2rm 2> /dev/null;
-  ssh $SSH_OPTIONS@"$REMARKABLE_IP" systemctl stop pocket2rm-reload 2> /dev/null;
-  scp $SSH_OPTIONScmd/pocket2rm/pocket2rm.arm root@"$REMARKABLE_IP":/home/root/.
-  scp $SSH_OPTIONScmd/pocket2rm-reload/pocket2rm-reload.arm root@"$REMARKABLE_IP":/home/root/.
+  scp "$HOME/.pocket2rm" root@"$REMARKABLE_IP":/home/root/.
+  ssh root@"$REMARKABLE_IP" systemctl stop pocket2rm 2> /dev/null;
+  ssh root@"$REMARKABLE_IP" systemctl stop pocket2rm-reload 2> /dev/null;
+  scp cmd/pocket2rm/pocket2rm.arm root@"$REMARKABLE_IP":/home/root/.
+  scp cmd/pocket2rm-reload/pocket2rm-reload.arm root@"$REMARKABLE_IP":/home/root/.
 }
 
 copy_service_files_to_remarkable() {
   cd "$INSTALL_SCRIPT_DIR"
-  scp $SSH_OPTIONScmd/pocket2rm/pocket2rm.service root@"$REMARKABLE_IP":/etc/systemd/system/.
-  scp $SSH_OPTIONScmd/pocket2rm-reload/pocket2rm-reload.service root@"$REMARKABLE_IP":/etc/systemd/system/.
+  echo "Copying service files"
+  scp cmd/pocket2rm/pocket2rm.service root@"$REMARKABLE_IP":/etc/systemd/system/.
+  scp cmd/pocket2rm-reload/pocket2rm-reload.service root@"$REMARKABLE_IP":/etc/systemd/system/.
 }
 
 register_and_run_service_on_remarkable() {
-  ssh $SSH_OPTIONS@"$REMARKABLE_IP" systemctl enable pocket2rm-reload
-  ssh $SSH_OPTIONS@"$REMARKABLE_IP" systemctl start pocket2rm-reload
+  ssh root@"$REMARKABLE_IP" systemctl enable pocket2rm-reload
+  ssh root@"$REMARKABLE_IP" systemctl start pocket2rm-reload
 }
 
 INSTALL_SCRIPT_DIR=""
