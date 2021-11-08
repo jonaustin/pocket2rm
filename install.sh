@@ -12,7 +12,6 @@
 #   HostkeyAlgorithms +ssh-rsa
 #   PubkeyAcceptedAlgorithms +ssh-rsa
 
-
 set -eu
 
 check_go() {
@@ -43,6 +42,10 @@ compile_bin_files() {
   GOOS=linux GOARCH=arm GOARM=7 go build -o pocket2rm-reload.arm
 
   printf "pocket2rm successfully compiled"
+
+  printf "\n\n"
+  "$INSTALL_SCRIPT_DIR/cmd/pocket2rm-setup/main"
+  printf "\n"
 }
 
 copy_bin_files_to_remarkable() {
@@ -56,7 +59,6 @@ copy_bin_files_to_remarkable() {
 
 copy_service_files_to_remarkable() {
   cd "$INSTALL_SCRIPT_DIR"
-  echo "Copying service files"
   scp cmd/pocket2rm/pocket2rm.service root@"$REMARKABLE_IP":/etc/systemd/system/.
   scp cmd/pocket2rm-reload/pocket2rm-reload.service root@"$REMARKABLE_IP":/etc/systemd/system/.
 }
@@ -71,13 +73,10 @@ REMARKABLE_IP=""
 
 main() {
   INSTALL_SCRIPT_DIR=$(pwd)
-  SSH_OPTIONS="-o 'HostKeyAlgorithms=+ssh-rsa'"
 
   printf "\n"
   read  -r -p "Enter your Remarkable IP address [10.11.99.1]: " REMARKABLE_IP
-  read  -r -p "Number of articles to fetch: " NUM_FETCH_ARTICLES
   REMARKABLE_IP=${REMARKABLE_IP:-10.11.99.1}
-  export NUM_FETCH_ARTICLES=${NUM_FETCH_ARTICLES:-10}
   
   if [ ! -f "$HOME/.pocket2rm" ]; then
     check_go
