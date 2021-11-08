@@ -2,26 +2,24 @@ package main
 
 import (
 	"fmt"
-	"os"
-	"strconv"
 )
 
 func main() {
 	fmt.Println("start program")
 
-	var getMaxFiles = func(key string) uint {
-		val, existing := os.LookupEnv(key)
-		if existing {
-			maxFiles, err := strconv.ParseInt(val, 10, 64)
-			if err != nil {
-				fmt.Println(err)
-			}
-			return uint(maxFiles)
-		}
+	//var getMaxFiles = func(key string) uint {
+	//  val, existing := os.LookupEnv(key)
+	//  if existing {
+	//    maxFiles, err := strconv.ParseInt(val, 10, 64)
+	//    if err != nil {
+	//      fmt.Println(err)
+	//    }
+	//    return uint(maxFiles)
+	//  }
 
-		return 10
-	}
-	var maxFiles = getMaxFiles("NUM_FETCH_ARTICLES")
+	//  return 10
+	//}
+	//var maxFiles = getMaxFiles("NUM_FETCH_ARTICLES")
 
 	if reloadFileExists() {
 		fmt.Println("reload file exists")
@@ -32,6 +30,7 @@ func main() {
 			generatePocketFolder()
 		}
 		generateReloadFile()
-		generateFiles(maxFiles)
+		//generateFiles(maxFiles)
+		generateFiles()
 	}
 }

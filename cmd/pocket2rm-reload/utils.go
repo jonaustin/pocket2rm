@@ -27,11 +27,12 @@ type ExtraMetaData struct {
 
 //Config silence lint
 type Config struct {
-	ConsumerKey      string   `yaml:"consumerKey"`
-	AccessToken      string   `yaml:"accessToken"`
-	ReloadUUID       string   `yaml:"reloadUUID"`
-	PocketFolderUUID string   `yaml:"pocketFolderUUID"`
-	HandledArticles  []string `yaml:"handledArticles"` //id of article //TODO: should be converted to set for better time complexity
+	ConsumerKey        string   `yaml:"consumerKey"`
+	AccessToken        string   `yaml:"accessToken"`
+	ReloadUUID         string   `yaml:"reloadUUID"`
+	PocketFolderUUID   string   `yaml:"pocketFolderUUID"`
+	NumArticlesToFetch string   `yaml:"numArticlesToFetch"`
+	HandledArticles    []string `yaml:"handledArticles"` //id of article //TODO: should be converted to set for better time complexity
 }
 
 //MetaData silence lint

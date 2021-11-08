@@ -4,8 +4,6 @@ import (
 	"bufio"
 	"fmt"
 	"io/ioutil"
-	"net/http"
-	"net/http/httptest"
 	"os"
 	"os/exec"
 	"os/user"
@@ -13,7 +11,6 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/motemen/go-pocket/auth"
 	"gopkg.in/yaml.v3"
 )
 
@@ -29,49 +26,58 @@ func input(text string) string {
 //obtain consumerKey, accessToken and write to credentialsPath
 func setup(credentialsPath string) error {
 
-	consumerKey := input("Insert consumerKey: ")
+	//consumerKey := input("Insert consumerKey: ")
+	num := input("Max number of articles to fetch: ")
+	numArticlesToFetch := num
+	//numArticlesToFetch, err := strconv.ParseInt(num, 10, 64)
+	//if err != nil {
+	//  fmt.Println(err)
+	//}
 
-	// setup local listener server for a confirmation
-	ch := make(chan struct{})
-	ts := httptest.NewServer(
-		http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+	//// setup local listener server for a confirmation
+	//ch := make(chan struct{})
+	//ts := httptest.NewServer(
+	//  http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 
-			if req.URL.Path != "/" {
-				http.Error(w, "Not Found", 404)
-				return
-			}
+	//    if req.URL.Path != "/" {
+	//      http.Error(w, "Not Found", 404)
+	//      return
+	//    }
 
-			w.Header().Set("Content-Type", "text/plain")
-			fmt.Fprintln(w, "Choice registered.")
-			ch <- struct{}{}
-		}))
+	//    w.Header().Set("Content-Type", "text/plain")
+	//    fmt.Fprintln(w, "Choice registered.")
+	//    ch <- struct{}{}
+	//  }))
 
-	defer ts.Close()
+	//defer ts.Close()
 
-	requestToken, err := auth.ObtainRequestToken(consumerKey, ts.URL)
-	if err != nil {
-		fmt.Println("Could not obtain request token: ", err)
-		return err
-	}
+	//requestToken, err := auth.ObtainRequestToken(consumerKey, ts.URL)
+	//if err != nil {
+	//  fmt.Println("Could not obtain request token: ", err)
+	//  return err
+	//}
 
-	//Open authorization URL in default browser for user to confirm application
-	authorizationURL := auth.GenerateAuthorizationURL(requestToken, ts.URL)
+	////Open authorization URL in default browser for user to confirm application
+	//authorizationURL := auth.GenerateAuthorizationURL(requestToken, ts.URL)
 
-	open(authorizationURL)
+	//open(authorizationURL)
 
-	<-ch //block until request comes in
+	//<-ch //block until request comes in
 
-	authorization, err := auth.ObtainAccessToken(consumerKey, requestToken)
-	if err != nil {
-		fmt.Println("Could not obtain accessToken: ", err)
-		return err
-	}
+	//authorization, err := auth.ObtainAccessToken(consumerKey, requestToken)
+	//if err != nil {
+	//  fmt.Println("Could not obtain accessToken: ", err)
+	//  return err
+	//}
 
-	fmt.Println("Authorized.")
+	//fmt.Println("Authorized.")
 
 	credentials := make(map[string]string)
-	credentials["consumerKey"] = consumerKey
-	credentials["accessToken"] = authorization.AccessToken
+	//credentials["consumerKey"] = consumerKey
+	//credentials["accessToken"] = authorization.AccessToken
+	credentials["consumerKey"] = "NOPE"
+	credentials["accessToken"] = "NOPE"
+	credentials["numArticlesToFetch"] = numArticlesToFetch //FIXMe: make num
 
 	ymlContent, err := yaml.Marshal(credentials)
 	if err != nil {

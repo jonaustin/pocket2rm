@@ -27,11 +27,12 @@ type ExtraMetaData struct {
 
 //Config silence lint
 type Config struct {
-	ConsumerKey      string   `yaml:"consumerKey"`
-	AccessToken      string   `yaml:"accessToken"`
-	ReloadUUID       string   `yaml:"reloadUUID"`
-	PocketFolderUUID string   `yaml:"pocketFolderUUID"`
-	HandledArticles  []string `yaml:"handledArticles"` //id of article //TODO: should be converted to set for better time complexity
+	ConsumerKey        string   `yaml:"consumerKey"`
+	AccessToken        string   `yaml:"accessToken"`
+	ReloadUUID         string   `yaml:"reloadUUID"`
+	PocketFolderUUID   string   `yaml:"pocketFolderUUID"`
+	NumArticlesToFetch string   `yaml:"numArticlesToFetch"`
+	HandledArticles    []string `yaml:"handledArticles"` //id of article //TODO: should be converted to set for better time complexity
 }
 
 //MetaData silence lint
@@ -385,8 +386,18 @@ func getReadableArticle(url *url.URL) (string, string, error) {
 	return article.Title, content, nil
 }
 
-func generateFiles(maxArticles uint) error {
+func generateFiles() error {
 	fmt.Println("inside generateFiles")
+
+	config := getConfig()
+	res, err := strconv.ParseUint(config.NumArticlesToFetch, 10, 32)
+	var maxArticles uint = 0 // fixme: remember how to initialize an empty var...
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		maxArticles = uint(res)
+	}
+
 	pocketArticles, err := getPocketItems()
 	if err != nil {
 		fmt.Println("Could not get pocket articles: ", err)
