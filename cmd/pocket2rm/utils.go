@@ -406,6 +406,7 @@ func generateFiles() error {
 
 	var processed uint = 0
 	for _, pocketItem := range pocketArticles {
+		fmt.Println("Fetching ", pocketItem.title)
 		if alreadyHandled(pocketItem) {
 			fmt.Println("already handled")
 			continue
